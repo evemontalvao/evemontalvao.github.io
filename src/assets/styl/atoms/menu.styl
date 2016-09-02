@@ -1,0 +1,68 @@
+nav.main-menu
+	width 100%
+
+	ul
+		margin 0 auto
+		padding 0
+		
+	ul li
+		width 200px
+		clear both
+		margin 1% auto
+		list-style none
+		text-align center
+		background-color rgba(255,255,255,0.8)
+		padding 1em
+		@media screen and (min-width: 500px)
+			margin-top 100px
+			display inline-block
+			padding 5px
+			width 110px
+	
+		a 	
+			width 100%
+			margin 0 auto
+			text-decoration none
+			text-transform uppercase
+			font-family $default-font
+			font-weight normal
+			letter-spacing -1px
+			display block
+			border-radius 3px			
+
+	ul li:nth-of-type(1)
+		a
+			color $pink
+		&:hover
+			background-color $pink
+			transition background 1s linear 0.1s
+			a
+				color white
+	ul li:nth-of-type(2)
+		a
+			color $cyan
+		&:hover
+			background-color $cyan
+			transition background 1s linear 0.1s
+			a
+				color white
+		
+	ul li:nth-of-type(3)
+		a
+			color $orange
+		&:hover
+			background-color $orange
+			transition background 1s linear 0.1s
+			a
+				color white
+	ul li:nth-of-type(4)
+		a
+			color $blue
+		&:hover
+			color white
+			background-color $blue
+			transition background 1s linear 0.1s
+			a
+				color white
+		
+		

@@ -1,0 +1,50 @@
+.contato
+	height 70vh
+	width 90%
+	padding 2%
+	margin 0 auto
+	background-color $cyan
+	@media screen and (min-width: 820px)
+		height 40vh
+	p 
+		width 70%
+		margin 0 auto
+		text-align center
+		color white
+		font-family $default-font
+		padding 0
+		
+	&-container
+		width 100%
+		float left
+		padding 4%
+		@media screen and (min-width: 820px)
+			width 50%
+			padding 0
+
+		h2
+			color white
+			font-size 1em
+			font-family $second-font
+			text-align center
+		p 
+			text-align center
+			color white
+			font-family $default-font
+			line-height 2em
+			padding 0
+		p i
+			padding 10px
+			color white
+		p i:nth-of-type(1)
+			&:hover
+				color $blue
+		p i:nth-of-type(2)
+			&:hover
+				color $orange
+		p i:nth-of-type(3)
+			&:hover
+				color $cyan
+		
+		
+		
