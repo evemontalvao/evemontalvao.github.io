@@ -1,0 +1,10 @@
+*.gz
+*.tar
+*.zip
+*.rar
+.DS_Store
+Thumbs.db
+node_modules/
+src/assets/components/
+build/
+*.css.map
