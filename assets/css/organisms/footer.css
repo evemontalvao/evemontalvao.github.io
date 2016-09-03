@@ -1,8 +1,1 @@
-footer {
-  height: 15vh;
-  padding: 1.5em;
-  background-color: $blue;
-  color: #fff;
-  font-family: $default-font;
-  text-align: center;
-}
+footer{height:15vh;padding:1.5em;background-color:$blue;color:#fff;font-family:$default-font;text-align:center}

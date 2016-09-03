@@ -1,13 +1,1 @@
-.logo-container {
-  width: 90px;
-  height: 90px;
-  clear: both;
-  margin: 0 auto;
-  background-color: #fff;
-  border-radius: 50%;
-}
-.logo {
-  width: 45px;
-  margin-top: 35%;
-  vertical-align: middle;
-}
+.logo-container{width:90px;height:90px;clear:both;margin:0 auto;background-color:#fff;border-radius:50%}.logo{width:45px;margin-top:35%;vertical-align:middle}

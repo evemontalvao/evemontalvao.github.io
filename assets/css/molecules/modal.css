@@ -1,8 +1,1 @@
-.maskModal {
-  position: fixed;
-  min-height: 100%;
-  width: 100%;
-  background-color: rgba(255,255,255,0.5);
-  z-index: 5;
-  display: block;
-}
+.maskModal{position:fixed;min-height:100%;width:100%;background-color:rgba(255,255,255,.5);z-index:5;display:block}

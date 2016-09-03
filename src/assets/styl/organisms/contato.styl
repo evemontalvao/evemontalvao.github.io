@@ -1,5 +1,5 @@
 .contato
-	height 70vh
+	height 60vh
 	width 90%
 	padding 2%
 	margin 0 auto
@@ -13,6 +13,8 @@
 		color white
 		font-family $default-font
 		padding 0
+		@media screen and (max-width: 500px)
+			width 90%
 		
 	&-container
 		width 100%
@@ -21,6 +23,16 @@
 		@media screen and (min-width: 820px)
 			width 50%
 			padding 0
+		@media screen and (max-width: 500px)
+			padding-top 0
+
+		
+		ul li
+			list-style none
+			text-align center
+			color white
+			font-family $second-font
+			padding 3px
 
 		h2
 			color white
