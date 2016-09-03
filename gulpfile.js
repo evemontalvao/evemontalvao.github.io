@@ -38,6 +38,7 @@ gulp.task('html', function(){
 gulp.task('styles', function(){
   return gulp.src(srcPaths.css)
       .pipe(stylus())
+      .pipe(minifycss())
       .pipe(gulp.dest(buildPaths.css))
       .pipe(browserSync.reload({ stream: true}));
 });
