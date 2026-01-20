@@ -1,86 +1,148 @@
 ---
-import { Image } from 'astro:assets';
-import type { CollectionEntry } from 'astro:content';
-import BaseHead from '../components/BaseHead.astro';
-import Footer from '../components/Footer.astro';
-import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
+import '../styles/global.css'
+import { Image } from 'astro:assets'
+import type { CollectionEntry } from 'astro:content'
+import BaseHead from '../components/BaseHead.astro'
+import Footer from '../components/Footer.astro'
+import FormattedDate from '../components/FormattedDate.astro'
+import Header from '../components/Header.astro'
 
-type Props = CollectionEntry<'blog'>['data'];
+type Props = CollectionEntry<'blog'>['data']
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, images, heroImage, notes } =
+  Astro.props
+const isMultipleImages = images && images.length > 0
 ---
 
 <html lang="en">
-	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--box-shadow);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-		</style>
-	</head>
+  <head>
+    <BaseHead title={title} description={description} />
+    <style>
+      main {
+        width: 100%;
+        max-width: 100%;
+        margin: 0 auto;
+        display: flex;
+      }
 
-	<body>
-		<Header />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						<h1>{title}</h1>
-						<hr />
-					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
-		<Footer />
-	</body>
+      article {
+        width: 100%;
+      }
+
+      .prose {
+        margin: auto;
+        color: rgb(var(--gray-dark));
+        display: flex;
+        gap: 16px;
+      }
+      .title {
+        /* font-family: 'Oranienbaum', serif; */
+        font-size: 22px;
+        margin-bottom: 1em;
+        padding: 1em 0;
+        text-align: center;
+        line-height: 1;
+      }
+      .title h1 {
+        margin: 0 0 0.5em 0;
+      }
+      .date {
+        margin-bottom: 0.5em;
+        color: rgb(var(--pink));
+        font-size: 18px;
+      }
+      .last-updated-on {
+        font-style: italic;
+      }
+      .images-gallery {
+        display: grid;
+        flex: 1;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 1em;
+      }
+
+      .images-gallery img {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 0;
+      }
+
+      .content {
+        width: 100%;
+      }
+
+      @media (min-width: 720px) {
+        .prose {
+          max-width: calc(100% - 2em);
+        }
+
+        .hero-image {
+          display: block;
+          width: 100%;
+        }
+
+        .content {
+          max-width: 500px;
+          margin: 2em;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <Header />
+    <main>
+      <article>
+        <hr />
+        <div class="title">
+          <div class="date">
+            <FormattedDate date={pubDate} />
+            {
+              updatedDate && (
+                <div class="last-updated-on">
+                  Last updated on <FormattedDate date={updatedDate} />
+                </div>
+              )
+            }
+          </div>
+          <h1>{title}</h1>
+        </div>
+        <div class="prose">
+          {
+            heroImage && !isMultipleImages && (
+              <Image width={600} height={400} src={heroImage} alt="" />
+            )
+          }
+          {
+            isMultipleImages && (
+              <div class="images-gallery">
+                {images.map((img) => (
+                  <Image width={600} height={400} src={img} alt="" />
+                ))}
+              </div>
+            )
+          }
+          {
+            notes && notes.length > 0 && (
+              <div class="content">
+                <section>
+                  <h2>Notes</h2>
+                  <ul>
+                    {notes.map((note) => (
+                      <li>
+                        <p>{note}</p>
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              </div>
+            )
+          }
+        </div>
+      </article>
+    </main>
+    <Footer />
+  </body>
 </html>

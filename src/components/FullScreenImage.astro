@@ -1,0 +1,92 @@
+---
+
+---
+
+<dialog
+  id="fullscreen-image-dialog"
+  class="fullscreen-dialog"
+  aria-label="Full screen image viewer"
+>
+  <button class="close" type="button" aria-label="Close">×</button>
+  <img class="image" alt="" />
+</dialog>
+
+<script>
+  const dialogEl = document.getElementById('fullscreen-image-dialog')
+  const dialog = dialogEl instanceof HTMLDialogElement ? dialogEl : null
+  if (dialog) {
+    const dlg: HTMLDialogElement = dialog
+    const img = dlg.querySelector('img.image')
+    const closeBtn = dlg.querySelector('button.close')
+
+    function openWithSrc(src: string) {
+      if (img instanceof HTMLImageElement) img.src = src
+      dlg.showModal()
+    }
+
+    // Open from any element with `data-fullscreen-src="..."`
+    document.addEventListener('click', (e) => {
+      const target = e.target instanceof Element ? e.target : null
+      const opener = target?.closest?.('[data-fullscreen-src]')
+      if (!opener) return
+
+      const src = opener.getAttribute('data-fullscreen-src')
+      if (!src) return
+
+      e.preventDefault()
+      openWithSrc(src)
+    })
+
+    // Close button
+    closeBtn?.addEventListener('click', () => dlg.close())
+
+    // Click backdrop to close
+    dlg.addEventListener('click', (e) => {
+      if (e.target === dlg) dlg.close()
+    })
+
+    // Clear src after close (avoids showing previous image flash on next open)
+    dlg.addEventListener('close', () => {
+      if (img instanceof HTMLImageElement) img.src = ''
+    })
+  }
+</script>
+
+<style>
+  .fullscreen-dialog {
+    border: none;
+    padding: 0;
+    max-width: 100vw;
+    max-height: 100vh;
+    background: transparent;
+  }
+
+  .fullscreen-dialog::backdrop {
+    background: rgba(0, 0, 0, 0.75);
+  }
+
+  .fullscreen-dialog .image {
+    display: block;
+    max-width: calc(100vw - 2rem);
+    max-height: calc(100vh - 2rem);
+    margin: 1rem;
+    object-fit: contain;
+    border-radius: 12px;
+    box-shadow: var(--box-shadow);
+  }
+
+  .fullscreen-dialog .close {
+    position: fixed;
+    top: 12px;
+    right: 12px;
+    width: 40px;
+    height: 40px;
+    border-radius: 999px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    font-size: 28px;
+    line-height: 40px;
+    cursor: pointer;
+  }
+</style>
