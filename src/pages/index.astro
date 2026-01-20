@@ -24,12 +24,13 @@ const posts = (await getCollection('blog')).sort(
     <style>
       main {
         column-count: 2;
-        column-gap: 16px;
+        column-gap: 2px;
       }
 
       @media (min-width: 720px) {
         main {
           width: 80%;
+          column-gap: 16px;
           column-count: 3;
         }
       }

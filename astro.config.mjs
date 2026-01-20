@@ -6,11 +6,13 @@ import { defineConfig } from 'astro/config';
 
 import tailwindcss from '@tailwindcss/vite';
 
+import icon from 'astro-icon';
+
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://example.com',
-  integrations: [mdx(), sitemap()],
-
+  site: 'https://evemontalvao.github.io',
+  integrations: [mdx(), sitemap(), icon()],
+  base: '/evemontalvao',
   vite: {
     plugins: [tailwindcss()],
   },

@@ -1,6 +1,5 @@
 ---
 import '../styles/global.css'
-import { Image } from 'astro:assets'
 
 const { id, data } = Astro.props
 const hasMultipleImages = data.images && data.images.length > 0
@@ -14,28 +13,22 @@ const hasMultipleImages = data.images && data.images.length > 0
 </a>
 <style>
   h3 {
-    font-size: 16px;
-    text-transform: uppercase;
     position: absolute;
-    top: 50%;
+    bottom: 0;
     left: 50%;
-    background-color: rgba(255, 255, 255, 0.9);
-    padding: 12px;
-    display: none;
     margin: auto auto;
     width: 90%;
-    text-align: center;
     transform: translate(-50%, -50%);
+    font-family: 'Oranienbaum', serif;
+    color: #fff;
+    font-weight: 600;
+    font-size: 24px;
   }
 
   .post {
     position: relative;
     margin: 0 0 16px;
     cursor: pointer;
-
-    &:hover h3 {
-      display: block;
-    }
 
     img {
       border-radius: 0;
@@ -63,5 +56,16 @@ const hasMultipleImages = data.images && data.images.length > 0
 
   .multiple-imgs img {
     border-radius: 0;
+  }
+
+  @media (min-width: 720px) {
+    h3 {
+      display: none;
+      font-size: 48px;
+    }
+
+    .post:hover h3 {
+      display: block;
+    }
   }
 </style>
