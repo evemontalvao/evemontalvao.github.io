@@ -12,6 +12,14 @@ const hasMultipleImages = data.images && data.images.length > 0
   </div>
 </a>
 <style>
+  /* Fix tiny top offset in CSS columns (mobile Safari/prod) */
+  a {
+    display: block;
+    break-inside: avoid;
+    -webkit-column-break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
   h3 {
     position: absolute;
     bottom: 0;
