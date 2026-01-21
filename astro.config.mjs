@@ -12,7 +12,7 @@ import icon from 'astro-icon';
 export default defineConfig({
   site: 'https://evemontalvao.github.io',
   integrations: [mdx(), sitemap(), icon()],
-  base: '/evemontalvao.github.io/',
+  base: '/',
   vite: {
     plugins: [tailwindcss()],
   },
