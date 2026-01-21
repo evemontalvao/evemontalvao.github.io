@@ -6,12 +6,18 @@ import BaseHead from '../components/BaseHead.astro'
 import Footer from '../components/Footer.astro'
 import FormattedDate from '../components/FormattedDate.astro'
 import Header from '../components/Header.astro'
+import { Icon } from 'astro-icon/components'
 
 type Props = CollectionEntry<'blog'>['data']
 
 const { title, description, pubDate, updatedDate, images, heroImage, notes } =
   Astro.props
 const isMultipleImages = images && images.length > 0
+const hasNotes = !!(notes && notes.length > 0)
+const imageList = images?.length ? images : heroImage ? [heroImage] : []
+const useCarousel = hasNotes && imageList.length > 0
+
+const backHref = new URL('..', Astro.url).pathname
 ---
 
 <html lang="en">
@@ -19,7 +25,7 @@ const isMultipleImages = images && images.length > 0
     <BaseHead title={title} description={description} />
     <style>
       main {
-        width: 100%;
+        width: calc(100% - 2em);
         max-width: 100%;
         margin: 0 auto;
         display: flex;
@@ -34,21 +40,30 @@ const isMultipleImages = images && images.length > 0
         color: rgb(var(--gray-dark));
         display: flex;
         gap: 16px;
+        flex-direction: column;
       }
-      .title {
+
+      .prose img {
+        border-radius: 0;
+      }
+
+      .post-header {
+        font-family: 'Oranienbaum', serif;
+        color: var(--text);
         font-size: 22px;
-        margin-bottom: 1em;
-        padding: 1em 0;
+        margin: 1em 0;
         text-align: center;
-        line-height: 1;
+        line-height: 1.3;
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        align-items: start;
       }
-      .title h1 {
-        margin: 0 0 0.5em 0;
-      }
+
       .date {
         margin-bottom: 0.5em;
-        color: rgb(var(--pin));
-        font-size: 18px;
+        font-style: italic;
+        font-size: 14px;
+        font-family: 'Atkinson';
       }
       .last-updated-on {
         font-style: italic;
@@ -70,11 +85,115 @@ const isMultipleImages = images && images.length > 0
 
       .content {
         width: 100%;
+        padding: 0 0 2em;
+      }
+
+      .carousel-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .carousel {
+        display: flex;
+        gap: 12px;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        padding: 4px 0 12px;
+      }
+
+      .carousel::-webkit-scrollbar {
+        height: 6px;
+      }
+
+      .carousel::-webkit-scrollbar-thumb {
+        background: rgba(var(--gray), 0.35);
+        border-radius: 999px;
+      }
+
+      .carousel figure {
+        flex: 0 0 80%;
+        scroll-snap-align: start;
+        margin: 0;
+      }
+
+      .carousel img {
+        width: 100%;
+        height: 70vh;
+        object-fit: cover;
+        object-position: center;
+        border-radius: 0;
+      }
+
+      .carousel-controls {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 12px;
+        pointer-events: none;
+      }
+
+      .carousel-controls button {
+        pointer-events: auto;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        color: #fff;
+        cursor: pointer;
+        font-size: 45px;
+      }
+
+      .back {
+        justify-self: start;
+        display: inline-flex;
+        align-items: center;
+        min-height: 24px;
+        margin: 5px 0;
+      }
+
+      .back a {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        color: var(--text);
+        text-decoration: none;
+      }
+
+      .back a:hover {
+        color: var(--accent);
+      }
+
+      .back svg {
+        width: 24px;
+        height: 24px;
+      }
+
+      .header-content {
+        justify-self: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .spacer {
+        justify-self: end;
+        min-height: 24px;
+      }
+
+      .notes {
+        list-style-type: disc;
+        list-style-position: inside;
       }
 
       @media (min-width: 720px) {
-        .prose {
-          max-width: calc(100% - 2em);
+        main {
+          width: calc(100% - 10em);
         }
 
         .hero-image {
@@ -83,8 +202,22 @@ const isMultipleImages = images && images.length > 0
         }
 
         .content {
-          max-width: 500px;
-          margin: 2em;
+          width: auto;
+          margin: 0 2em;
+        }
+
+        .prose {
+          justify-content: center;
+          flex-direction: row;
+          padding: 0 0 6em;
+        }
+
+        .carousel figure {
+          flex: 0 0 60%;
+        }
+
+        .post-header {
+          margin: 0 0 1em;
         }
       }
     </style>
@@ -94,45 +227,74 @@ const isMultipleImages = images && images.length > 0
     <Header />
     <main>
       <article>
-        <hr />
-        <div class="title">
-          <div class="date">
-            <FormattedDate date={pubDate} />
-            {
-              updatedDate && (
-                <div class="last-updated-on">
-                  Last updated on <FormattedDate date={updatedDate} />
-                </div>
-              )
-            }
+        <div class="post-header">
+          <div class="back">
+            <a href={backHref} aria-label="Go back">
+              <Icon name="arrow-left" class="icon" stroke-width={4} />
+              <span class="sr-only">Back</span>
+            </a>
           </div>
-          <h1>{title}</h1>
+          <div class="header-content">
+            <h1>{title}</h1>
+            <div class="date">
+              <FormattedDate date={pubDate} />
+            </div>
+          </div>
+          <div class="spacer" aria-hidden="true"></div>
         </div>
         <div class="prose">
           {
-            heroImage && !isMultipleImages && (
-              <Image width={600} height={400} src={heroImage} alt="" />
-            )
-          }
-          {
-            isMultipleImages && (
-              <div class="images-gallery">
-                {images.map((img) => (
-                  <Image width={600} height={400} src={img} alt="" />
-                ))}
+            useCarousel ? (
+              <div class="carousel-wrapper" data-carousel>
+                <div class="carousel" data-track>
+                  {imageList.map((img, idx) => (
+                    <figure>
+                      <Image
+                        width={600}
+                        height={400}
+                        src={img}
+                        alt={`Image ${idx + 1} of ${imageList.length}`}
+                      />
+                    </figure>
+                  ))}
+                </div>
+                <div class="carousel-controls">
+                  <button type="button" data-prev>
+                    <Icon name="arrow-left" stroke-width={3} />
+                    <span class="sr-only">Previous image</span>
+                  </button>
+                  <button type="button" data-next>
+                    <span class="sr-only">Next image</span>
+                    <Icon
+                      name="arrow-left"
+                      stroke-width={3}
+                      style="rotate: 180deg;"
+                    />
+                  </button>
+                </div>
               </div>
+            ) : (
+              <>
+                {heroImage && !isMultipleImages && (
+                  <Image width={600} height={400} src={heroImage} alt="" />
+                )}
+                {isMultipleImages && (
+                  <div class="images-gallery">
+                    {images.map((img) => (
+                      <Image width={600} height={400} src={img} alt="" />
+                    ))}
+                  </div>
+                )}
+              </>
             )
           }
           {
             notes && notes.length > 0 && (
               <div class="content">
                 <section>
-                  <h2>Notes</h2>
-                  <ul>
+                  <ul class="notes">
                     {notes.map((note) => (
-                      <li>
-                        <p>{note}</p>
-                      </li>
+                      <li>{note}</li>
                     ))}
                   </ul>
                 </section>
@@ -143,5 +305,24 @@ const isMultipleImages = images && images.length > 0
       </article>
     </main>
     <Footer />
+    <script>
+      document.addEventListener('DOMContentLoaded', () => {
+        const carousels = document.querySelectorAll('[data-carousel]')
+        carousels.forEach((carousel) => {
+          const track = carousel.querySelector('[data-track]')
+          const prev = carousel.querySelector('[data-prev]')
+          const next = carousel.querySelector('[data-next]')
+          if (!track || !prev || !next) return
+
+          const scrollByWidth = () => track.clientWidth * 0.9
+          prev.addEventListener('click', () => {
+            track.scrollBy({ left: -scrollByWidth(), behavior: 'smooth' })
+          })
+          next.addEventListener('click', () => {
+            track.scrollBy({ left: scrollByWidth(), behavior: 'smooth' })
+          })
+        })
+      })
+    </script>
   </body>
 </html>

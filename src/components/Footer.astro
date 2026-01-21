@@ -3,35 +3,37 @@ import { Icon } from 'astro-icon/components'
 ---
 
 <footer>
-  <p class="inline">Made with <Icon name="heart" color="#c4733d" /></p>
-  <p>A place to share my hobbies, away from the noise of social media.</p>
+  <p class="inline">Made with <Icon name="heart" class="icon" /></p>
+  <p>A place to share my hobbies,</p><p>away from the noise of social media.</p>
   <p>All works © me. Made to be seen, not reused.</p>
+
   <ul class="social-links">
     <li>
       <a href="https://instagram.com/montalvaoeve"
-        ><Icon name="instagram" color="#c4733d" /></a
+        ><Icon name="instagram" class="icon" /></a
       >
     </li>
     <li>
       <a href="https://strava.com/athletes/31136766"
-        ><Icon name="strava" color="#c4733d" stroke-width={4} /></a
+        ><Icon name="strava" class="icon" stroke-width={4} /></a
       >
     </li>
     <li>
       <a href="https://github.com/evemontalvao"
-        ><Icon name="github" color="#c4733d" /></a
+        ><Icon name="github" class="icon" /></a
       >
     </li>
   </ul>
 </footer>
 <style>
   footer {
-    padding: 2em 1em;
-    background-color: #fff5ed;
+    padding: 2em;
+    background-color: #fffaff;
     text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
+    font-size: 14px;
   }
 
   footer p {
@@ -44,7 +46,7 @@ import { Icon } from 'astro-icon/components'
     gap: 1em;
     margin-top: 1em;
     width: 20%;
-    border-top: 1px solid #c4733d;
+    border-top: 1px solid var(--acent);
     padding: 26px;
   }
   .social-links a {

@@ -8,8 +8,8 @@
 
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
+	--text: #272727;
+	--accent: #9e515f;
 	--black: 15, 18, 25;
 	--gray: 96, 115, 159;
 	--gray-light: 229, 233, 240;
@@ -41,33 +41,31 @@
 	font-style: normal;
 	font-display: swap;
 }
+
+* {
+	margin-block-start: 0;
+  margin-block-end: 0;
+	box-sizing: border-box;
+}
+
 body {
 	font-family: "Atkinson", sans-serif;
 	margin: 0;
 	padding: 0;
 	text-align: left;
-	background-color: #fffbf7;
+	background-color: #fffffe;
 	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: #6b5a78;
+	color: var(--text);
 	font-size: 14px;
 	line-height: 1.7;
+	display: flex;
+	flex-direction: column;
 }
 main {
 	max-width: calc(100% - 2em);
 	margin: auto;
-	padding: 2em 0;
-}
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
-	line-height: 1.2;
 }
 
 strong,
@@ -75,19 +73,6 @@ b {
 	font-weight: 700;
 }
 
-p {
-	margin-bottom: 1em;
-}
-.prose p {
-	margin-bottom: 2em;
-}
-textarea {
-	width: 100%;
-	font-size: 16px;
-}
-input {
-	font-size: 16px;
-}
 table {
 	width: 100%;
 }
@@ -119,12 +104,17 @@ hr {
 	border-top: 1px solid rgb(var(--gray-light));
 }
 
+.icon {
+	color: var(--accent);
+}
+
 @media (min-width: 720px) {
 	body {
 		font-size: 18px;
 	}
 	main {
-		padding: 1em;
+		padding: 1em 0;
+		max-width: calc(100% - 10em)
 	}
 }
 
