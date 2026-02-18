@@ -9,13 +9,23 @@ const blog = defineCollection({
 			description: z.string(),
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
-			heroImage: image().optional(),
+			heroImage: z.object({
+				source: image().optional(),
+				url: z.string().optional(),
+				width: z.number(),
+				height: z.number(),
+				medium: z.string(),
+				alt: z.string()
+			}),
 			images: z.array(
 				z.object({
-					image: image(),
-					size: z.string(),
+					source: image().optional(),
+					url: z.string().optional(),
+					width: z.number(),
+    			height: z.number(),
 					medium: z.string(),
 					description: z.string(),
+					alt: z.string()
 				})
 			).optional(),
 			notes: z.array(z.string()).optional(),

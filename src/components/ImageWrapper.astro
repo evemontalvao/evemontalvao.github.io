@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets'
+const { url, source, width, height, alt, idx } = Astro.props
+---
+
+<figure>
+  {
+    url ? (
+      <Image
+        src={url}
+        width={width}
+        height={height}
+        alt={alt}
+        class="gallery-image"
+        data-image-index={idx}
+      />
+    ) : source ? (
+      <Image
+        src={source.src}
+        width={source.width}
+        height={source.height}
+        alt={alt}
+        class="gallery-image"
+        data-image-index={idx}
+      />
+    ) : null
+  }
+</figure>

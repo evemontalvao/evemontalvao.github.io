@@ -7,7 +7,7 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts'
 import PostThumbnail from '../components/PostThumbnail.astro'
 
 const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  (a, b) => a.data.pubDate.valueOf() - b.data.pubDate.valueOf(),
 )
 ---
 
@@ -22,13 +22,13 @@ const posts = (await getCollection('blog')).sort(
       rel="stylesheet"
     />
     <style>
-      main {
+      .posts {
         column-count: 2;
         column-gap: 2px;
       }
 
       @media (min-width: 720px) {
-        main {
+        .posts {
           column-gap: 16px;
           column-count: 3;
         }
@@ -38,7 +38,9 @@ const posts = (await getCollection('blog')).sort(
   <body>
     <Header />
     <main>
-      {posts.map((post) => <PostThumbnail {...post} />)}
+      <div class="posts">
+        {posts.map((post) => <PostThumbnail {...post} />)}
+      </div>
     </main>
     <Footer />
   </body>

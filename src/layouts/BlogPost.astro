@@ -8,11 +8,11 @@ import FormattedDate from '../components/FormattedDate.astro'
 import Header from '../components/Header.astro'
 import { Icon } from 'astro-icon/components'
 import ImageModal from '../components/ImageModal.astro'
+import ImageWrapper from '../components/ImageWrapper.astro'
 
 type Props = CollectionEntry<'blog'>['data']
 
-const { title, description, pubDate, images } = Astro.props
-
+const { title, description, pubDate, images, heroImage } = Astro.props
 const backHref = new URL('..', Astro.url).pathname
 ---
 
@@ -203,27 +203,35 @@ const backHref = new URL('..', Astro.url).pathname
           </div>
           <div class="spacer" aria-hidden="true"></div>
         </div>
-        <div class="prose-grid">
-          {
-            images?.map(({ image }, idx) => (
-              <figure>
-                <Image
-                  width={image.width}
-                  height={image.height}
-                  src={image}
-                  alt={`Image ${idx + 1} of ${images.length}`}
-                  quality={100}
-                  data-image-index={idx}
-                  class="gallery-image"
+        {
+          !images ? (
+            <div class="prose">
+              <ImageWrapper
+                url={heroImage.url}
+                width={heroImage.width}
+                height={heroImage.height}
+                alt=""
+                class="gallery-image"
+              />
+            </div>
+          ) : (
+            <div class="prose-grid">
+              {images?.map(({ url, source, width, height, alt }, idx) => (
+                <ImageWrapper
+                  url={url}
+                  source={source}
+                  width={width}
+                  height={height}
+                  alt={alt ?? ''}
+                  idx={idx}
                 />
-              </figure>
-            ))
-          }
-        </div>
+              ))}
+            </div>
+          )
+        }
       </article>
+      {images && <ImageModal images={images} />}
     </main>
     <Footer />
-
-    {images && <ImageModal client:load images={images} />}
   </body>
 </html>

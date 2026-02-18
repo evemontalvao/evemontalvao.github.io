@@ -4,9 +4,11 @@ import { Icon } from 'astro-icon/components'
 
 interface Props {
   images: {
-    image: ImageMetadata
+    source?: ImageMetadata
+    url?: string
     description: string
-    size: string
+    width: number
+    height: number
     medium: string
   }[]
 }
@@ -220,7 +222,7 @@ const { images } = Astro.props
 
     const getSrcFromIndex = (idx) => {
       const img = images[idx]
-      return img?.image.src
+      return img?.source?.src || img?.url
     }
 
     const render = () => {

@@ -5,7 +5,7 @@ import { Icon } from 'astro-icon/components'
 <footer>
   <p class="inline">Made with <Icon name="heart" class="icon" /></p>
   <p>A place to share my hobbies,</p><p>away from the noise of social media.</p>
-  <p>All works © me. Made to be seen, not reused.</p>
+  <p>All works © me.</p>
 
   <ul class="social-links">
     <li>
@@ -29,7 +29,9 @@ import { Icon } from 'astro-icon/components'
   footer {
     margin: 8em 0 0;
     padding: 2em;
-    background-color: #fffaff;
+    /* background-color: #fffaff; */
+    border-top: 1px solid var(--text);
+
     text-align: center;
     display: flex;
     flex-direction: column;
