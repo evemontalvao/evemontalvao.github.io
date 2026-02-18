@@ -7,12 +7,11 @@ const hasMultipleImages = data.images && data.images.length > 0
 
 <a href={`/${id}/`}>
   <div class={`post ${hasMultipleImages ? 'multiple-imgs' : ''}`}>
-    <img src={data.heroImage?.src} alt="" />
+    <img src={data.heroImage} alt="" />
     <h3>{data.title}</h3>
   </div>
 </a>
 <style>
-  /* Fix tiny top offset in CSS columns (mobile Safari/prod) */
   a {
     display: block;
     break-inside: avoid;
@@ -31,6 +30,7 @@ const hasMultipleImages = data.images && data.images.length > 0
     color: #fff;
     font-weight: 600;
     font-size: 24px;
+    line-height: 1;
   }
 
   .post {

@@ -1,0 +1,333 @@
+---
+import type { ImageMetadata } from 'astro'
+import { Icon } from 'astro-icon/components'
+
+interface Props {
+  images: {
+    image: ImageMetadata
+    description: string
+    size: string
+    medium: string
+  }[]
+}
+const { images } = Astro.props
+---
+
+<div
+  class="modal"
+  id="image-modal"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Image gallery"
+>
+  <div class="modal-background" id="modal-background"></div>
+
+  <button class="modal-close" type="button" aria-label="Close gallery">
+    <span class="modal-close-icon"></span>
+  </button>
+
+  <div class="modal-viewer">
+    <img id="modal-image" alt="" />
+    <div id="modal-description"></div>
+
+    <button
+      type="button"
+      id="modal-prev"
+      class="nav prev"
+      aria-label="Previous image"
+    >
+      <Icon name="arrow-left" stroke-width={3} />
+    </button>
+
+    <button
+      type="button"
+      id="modal-next"
+      class="nav next"
+      aria-label="Next image"
+    >
+      <Icon name="arrow-left" stroke-width={3} style="rotate: 180deg;" />
+    </button>
+  </div>
+</div>
+
+<style>
+  .modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 0.25s ease,
+      visibility 0.25s ease;
+  }
+
+  .modal.open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+  }
+
+  .modal-background {
+    position: absolute;
+    inset: -20%;
+    width: 140%;
+    height: 140%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: rgba(0, 0, 0, 0.9);
+    filter: blur(40px) brightness(0.7);
+    transform: scale(1.1);
+    z-index: -1;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 1001;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+
+  .modal-close-icon {
+    position: relative;
+    width: 20px;
+    height: 20px;
+  }
+
+  .modal-close-icon::before,
+  .modal-close-icon::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 2px;
+    height: 20px;
+    background: currentColor;
+    transform: translate(-50%, -50%) rotate(45deg);
+  }
+
+  .modal-close-icon::after {
+    transform: translate(-50%, -50%) rotate(-45deg);
+  }
+
+  .modal-viewer {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    padding: 60px 80px;
+  }
+
+  #modal-image {
+    width: auto;
+    height: auto;
+    max-width: calc(100vw - 160px);
+    max-height: calc(100vh - 160px);
+    object-fit: contain;
+    display: block;
+  }
+
+  .nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    cursor: pointer;
+    font-size: 32px;
+    border-radius: 50%;
+    width: 56px;
+    height: 56px;
+  }
+
+  .nav.prev {
+    left: 20px;
+  }
+
+  .nav.next {
+    right: 20px;
+  }
+
+  #modal-description {
+    color: #efefef;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: 300;
+    margin-top: 1em;
+  }
+
+  @media (max-width: 719px) {
+    #modal-image {
+      max-width: calc(100vw - 40px);
+      max-height: calc(100vh - 140px);
+    }
+    .modal-viewer {
+      padding: 40px 20px;
+    }
+
+    .modal-close {
+      top: 10px;
+      right: 10px;
+      width: 40px;
+      height: 40px;
+    }
+
+    .nav {
+      width: 44px;
+      height: 44px;
+      font-size: 24px;
+      padding: 12px;
+    }
+  }
+</style>
+
+<script define:vars={{ images }}>
+  document.addEventListener('DOMContentLoaded', () => {
+    const modal = document.getElementById('image-modal')
+    const modalImage = document.getElementById('modal-image')
+    const modalBackground = document.getElementById('modal-background')
+    const modalDescription = document.getElementById('modal-description')
+    const modalClose = modal?.querySelector('.modal-close')
+    const modalPrev = document.getElementById('modal-prev')
+    const modalNext = document.getElementById('modal-next')
+    const galleryImages = document.querySelectorAll('.gallery-image')
+
+    let startX = null
+    let startY = null
+    let isSwiping = false
+
+    if (!modal || !modalImage || !modalBackground) return
+
+    let currentIndex = 0
+
+    const getSrcFromIndex = (idx) => {
+      const img = images[idx]
+      return img?.image.src
+    }
+
+    const render = () => {
+      const src = getSrcFromIndex(currentIndex)
+      if (!src) return
+      modalImage.src = src
+      modalBackground.style.backgroundImage = `url(${src})`
+
+      if (modalDescription) {
+        modalDescription.textContent = images[currentIndex].description
+      }
+    }
+
+    const openModalAt = (idx) => {
+      currentIndex = idx
+      render()
+      modal.classList.add('open')
+      document.body.style.overflow = 'hidden'
+    }
+
+    const closeModal = () => {
+      modal.classList.remove('open')
+      document.body.style.overflow = ''
+    }
+
+    const prev = () => {
+      currentIndex = (currentIndex - 1 + images.length) % images.length
+      render()
+    }
+
+    const next = () => {
+      currentIndex = (currentIndex + 1) % images.length
+      render()
+    }
+
+    const setNavVisibility = () => {
+      const show = images.length > 1
+      modalPrev.style.display = show ? '' : 'none'
+      modalNext.style.display = show ? '' : 'none'
+    }
+
+    setNavVisibility()
+
+    galleryImages.forEach((img) => {
+      img.addEventListener('click', () => {
+        const imageIndex = parseInt(img.getAttribute('data-image-index') || '0')
+        openModalAt(imageIndex)
+      })
+    })
+
+    modalClose?.addEventListener('click', closeModal)
+
+    modal.addEventListener('click', (e) => {
+      if (e.target === modal) closeModal()
+    })
+
+    modalPrev?.addEventListener('click', prev)
+    modalNext?.addEventListener('click', next)
+
+    document.addEventListener('keydown', (e) => {
+      if (!modal.classList.contains('open')) return
+
+      if (e.key === 'Escape') closeModal()
+      if (e.key === 'ArrowLeft') prev()
+      if (e.key === 'ArrowRight') next()
+    })
+
+    const onTouchStart = (e) => {
+      if (!modal.classList.contains('open')) return
+      const t = e.touches[0]
+      startX = t.clientX
+      startY = t.clientY
+      isSwiping = true
+    }
+
+    const onTouchMove = (e) => {
+      if (!isSwiping || startX === null || startY === null) return
+
+      const t = e.touches[0]
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+
+      if (Math.abs(dy) > Math.abs(dx)) return
+
+      e.preventDefault()
+    }
+
+    const onTouchEnd = (e) => {
+      if (!isSwiping || startX === null || startY === null) return
+
+      const t = e.changedTouches[0]
+      const dx = t.clientX - startX
+      const dy = t.clientY - startY
+
+      isSwiping = false
+      startX = null
+      startY = null
+
+      if (Math.abs(dy) > Math.abs(dx)) return
+      if (Math.abs(dx) < 60) return
+
+      if (dx > 0) prev()
+      else next()
+    }
+
+    modal.addEventListener('touchstart', onTouchStart, { passive: true })
+    modal.addEventListener('touchmove', onTouchMove, { passive: false })
+    modal.addEventListener('touchend', onTouchEnd, { passive: true })
+  })
+</script>

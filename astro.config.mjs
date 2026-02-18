@@ -16,4 +16,7 @@ export default defineConfig({
   vite: {
     plugins: [tailwindcss()],
   },
+  image: {
+    domains: ['placehold.co'],
+  }
 });

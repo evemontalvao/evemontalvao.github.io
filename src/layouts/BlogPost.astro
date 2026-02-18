@@ -7,15 +7,11 @@ import Footer from '../components/Footer.astro'
 import FormattedDate from '../components/FormattedDate.astro'
 import Header from '../components/Header.astro'
 import { Icon } from 'astro-icon/components'
+import ImageModal from '../components/ImageModal.astro'
 
 type Props = CollectionEntry<'blog'>['data']
 
-const { title, description, pubDate, updatedDate, images, heroImage, notes } =
-  Astro.props
-const isMultipleImages = images && images.length > 0
-const hasNotes = !!(notes && notes.length > 0)
-const imageList = images?.length ? images : heroImage ? [heroImage] : []
-const useCarousel = hasNotes && imageList.length > 0
+const { title, description, pubDate, images } = Astro.props
 
 const backHref = new URL('..', Astro.url).pathname
 ---
@@ -88,67 +84,6 @@ const backHref = new URL('..', Astro.url).pathname
         padding: 0 0 2em;
       }
 
-      .carousel-wrapper {
-        position: relative;
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
-      .carousel {
-        display: flex;
-        gap: 12px;
-        overflow-x: auto;
-        scroll-snap-type: x mandatory;
-        padding: 4px 0 12px;
-      }
-
-      .carousel::-webkit-scrollbar {
-        height: 6px;
-      }
-
-      .carousel::-webkit-scrollbar-thumb {
-        background: rgba(var(--gray), 0.35);
-        border-radius: 999px;
-      }
-
-      .carousel figure {
-        flex: 0 0 80%;
-        scroll-snap-align: start;
-        margin: 0;
-      }
-
-      .carousel img {
-        width: 100%;
-        height: 70vh;
-        object-fit: cover;
-        object-position: center;
-        border-radius: 0;
-      }
-
-      .carousel-controls {
-        position: absolute;
-        inset: 0;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0 12px;
-        pointer-events: none;
-      }
-
-      .carousel-controls button {
-        pointer-events: auto;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 8px 12px;
-        color: #fff;
-        cursor: pointer;
-        font-size: 45px;
-      }
-
       .back {
         justify-self: start;
         display: inline-flex;
@@ -191,6 +126,31 @@ const backHref = new URL('..', Astro.url).pathname
         list-style-position: inside;
       }
 
+      .prose-grid {
+        column-count: 2;
+        column-gap: 2px;
+      }
+
+      .prose-grid img {
+        border-radius: 0;
+        margin-bottom: 1em;
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .prose-grid img:hover {
+        opacity: 0.9;
+      }
+
+      .images-gallery img {
+        cursor: pointer;
+        transition: opacity 0.2s;
+      }
+
+      .images-gallery img:hover {
+        opacity: 0.9;
+      }
+
       @media (min-width: 720px) {
         main {
           width: calc(100% - 10em);
@@ -212,12 +172,13 @@ const backHref = new URL('..', Astro.url).pathname
           padding: 0 0 6em;
         }
 
-        .carousel figure {
-          flex: 0 0 60%;
-        }
-
         .post-header {
           margin: 0 0 1em;
+        }
+
+        .prose-grid {
+          column-gap: 16px;
+          column-count: 3;
         }
       }
     </style>
@@ -242,87 +203,27 @@ const backHref = new URL('..', Astro.url).pathname
           </div>
           <div class="spacer" aria-hidden="true"></div>
         </div>
-        <div class="prose">
+        <div class="prose-grid">
           {
-            useCarousel ? (
-              <div class="carousel-wrapper" data-carousel>
-                <div class="carousel" data-track>
-                  {imageList.map((img, idx) => (
-                    <figure>
-                      <Image
-                        width={600}
-                        height={400}
-                        src={img}
-                        alt={`Image ${idx + 1} of ${imageList.length}`}
-                      />
-                    </figure>
-                  ))}
-                </div>
-                <div class="carousel-controls">
-                  <button type="button" data-prev>
-                    <Icon name="arrow-left" stroke-width={3} />
-                    <span class="sr-only">Previous image</span>
-                  </button>
-                  <button type="button" data-next>
-                    <span class="sr-only">Next image</span>
-                    <Icon
-                      name="arrow-left"
-                      stroke-width={3}
-                      style="rotate: 180deg;"
-                    />
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <>
-                {heroImage && !isMultipleImages && (
-                  <Image width={600} height={400} src={heroImage} alt="" />
-                )}
-                {isMultipleImages && (
-                  <div class="images-gallery">
-                    {images.map((img) => (
-                      <Image width={600} height={400} src={img} alt="" />
-                    ))}
-                  </div>
-                )}
-              </>
-            )
-          }
-          {
-            notes && notes.length > 0 && (
-              <div class="content">
-                <section>
-                  <ul class="notes">
-                    {notes.map((note) => (
-                      <li>{note}</li>
-                    ))}
-                  </ul>
-                </section>
-              </div>
-            )
+            images?.map(({ image }, idx) => (
+              <figure>
+                <Image
+                  width={image.width}
+                  height={image.height}
+                  src={image}
+                  alt={`Image ${idx + 1} of ${images.length}`}
+                  quality={100}
+                  data-image-index={idx}
+                  class="gallery-image"
+                />
+              </figure>
+            ))
           }
         </div>
       </article>
     </main>
     <Footer />
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        const carousels = document.querySelectorAll('[data-carousel]')
-        carousels.forEach((carousel) => {
-          const track = carousel.querySelector('[data-track]')
-          const prev = carousel.querySelector('[data-prev]')
-          const next = carousel.querySelector('[data-next]')
-          if (!track || !prev || !next) return
 
-          const scrollByWidth = () => track.clientWidth * 0.9
-          prev.addEventListener('click', () => {
-            track.scrollBy({ left: -scrollByWidth(), behavior: 'smooth' })
-          })
-          next.addEventListener('click', () => {
-            track.scrollBy({ left: scrollByWidth(), behavior: 'smooth' })
-          })
-        })
-      })
-    </script>
+    {images && <ImageModal client:load images={images} />}
   </body>
 </html>
