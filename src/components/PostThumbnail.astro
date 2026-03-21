@@ -21,9 +21,14 @@ const hasMultipleImages = data.images && data.images.length > 0
 <style>
   a {
     display: block;
+    width: 100%;
     break-inside: avoid;
     -webkit-column-break-inside: avoid;
     page-break-inside: avoid;
+  }
+
+  figure {
+    margin: 0;
   }
 
   h3 {
@@ -42,6 +47,7 @@ const hasMultipleImages = data.images && data.images.length > 0
 
   .post {
     position: relative;
+    width: 100%;
     margin: 0 0 2px;
     cursor: pointer;
 
