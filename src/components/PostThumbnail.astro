@@ -1,12 +1,13 @@
 ---
 import '../styles/global.css'
+import FormattedDate from './FormattedDate.astro'
 import ImageWrapper from './ImageWrapper.astro'
 
 const { id, data } = Astro.props
 const hasMultipleImages = data.images && data.images.length > 0
 ---
 
-<a href={`/${id}/`}>
+<a href={`/${id}/`} class="post-card">
   <div class={`post ${hasMultipleImages ? 'multiple-imgs' : ''}`}>
     <ImageWrapper
       url={data.heroImage.url}
@@ -15,16 +16,22 @@ const hasMultipleImages = data.images && data.images.length > 0
       height={data.heroImage.height}
       alt={data.heroImage.alt}
     />
-    <h3>{data.title}</h3>
+    <h3>
+      <span class="plaque">
+        <span class="plaque-title">{data.title}</span>
+        <span class="plaque-details">
+          {data.heroImage.medium}, <FormattedDate date={data.pubDate} />
+        </span>
+      </span>
+    </h3>
   </div>
 </a>
 <style>
   a {
     display: block;
     width: 100%;
-    break-inside: avoid;
-    -webkit-column-break-inside: avoid;
-    page-break-inside: avoid;
+    /* Height is driven by the image, never by the grid rows it spans. */
+    align-self: start;
   }
 
   figure {
@@ -33,27 +40,45 @@ const hasMultipleImages = data.images && data.images.length > 0
 
   h3 {
     position: absolute;
-    bottom: 0;
-    left: 50%;
-    margin: auto auto;
-    width: 90%;
-    transform: translate(-50%, -50%);
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0 5%;
+    text-align: left;
     font-family: 'Oranienbaum', serif;
-    color: #fff;
     font-weight: 600;
     font-size: 24px;
-    line-height: 1;
+    line-height: 1.5;
+  }
+
+  .plaque {
+    padding: 8px;
+    background-color: #fff;
+    color: var(--text);
+  }
+
+  .plaque-title {
+    display: block;
+  }
+
+  .plaque-details {
+    display: block;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
   }
 
   .post {
     position: relative;
     width: 100%;
-    margin: 0 0 2px;
     cursor: pointer;
+  }
 
-    img {
-      border-radius: 0;
-    }
+  .post :global(img) {
+    border-radius: 0;
   }
 
   .multiple-imgs:before {
@@ -82,15 +107,11 @@ const hasMultipleImages = data.images && data.images.length > 0
   @media (min-width: 720px) {
     h3 {
       display: none;
-      font-size: 48px;
-    }
-
-    .post {
-      margin: 0 0 16px;
+      font-size: 22px;
     }
 
     .post:hover h3 {
-      display: block;
+      display: flex;
     }
   }
 </style>

@@ -7,7 +7,8 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts'
 import PostThumbnail from '../components/PostThumbnail.astro'
 
 const posts = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+  (firstPost, secondPost) =>
+    secondPost.data.pubDate.valueOf() - firstPost.data.pubDate.valueOf(),
 )
 ---
 
@@ -30,8 +31,22 @@ const posts = (await getCollection('blog')).sort(
 
       @media (min-width: 720px) {
         .posts {
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 16px;
+          /* Capped so tiles stay small enough to read as one field rather
+             than a row of slabs. */
+          max-width: 1280px;
+          margin-inline: auto;
+          grid-template-columns: repeat(2, 1fr);
+          /* Fine-grained rows: each card spans however many it needs, so
+             cards stack independently instead of aligning to a row height. */
+          grid-auto-rows: 1px;
+          row-gap: 0;
+          column-gap: 8px;
+        }
+      }
+
+      @media (min-width: 1024px) {
+        .posts {
+          grid-template-columns: repeat(3, 1fr);
         }
       }
     </style>
@@ -44,5 +59,40 @@ const posts = (await getCollection('blog')).sort(
       </div>
     </main>
     <Footer />
+    <script>
+      const MASONRY_MIN_VIEWPORT_WIDTH_PX = 720
+      const MASONRY_VERTICAL_GAP_PX = 8
+
+      function updatePostRowSpans() {
+        const postCards =
+          document.querySelectorAll<HTMLElement>('.post-card')
+        const isMasonryActive =
+          window.innerWidth >= MASONRY_MIN_VIEWPORT_WIDTH_PX
+
+        postCards.forEach((postCard) => {
+          if (!isMasonryActive) {
+            postCard.style.removeProperty('grid-row-end')
+            return
+          }
+
+          const cardHeight = postCard.getBoundingClientRect().height
+          const rowSpan = Math.ceil(cardHeight + MASONRY_VERTICAL_GAP_PX)
+          postCard.style.gridRowEnd = `span ${rowSpan}`
+        })
+      }
+
+      function scheduleRowSpanUpdate() {
+        window.requestAnimationFrame(updatePostRowSpans)
+      }
+
+      scheduleRowSpanUpdate()
+      window.addEventListener('resize', scheduleRowSpanUpdate)
+      document.fonts.ready.then(scheduleRowSpanUpdate)
+      document
+        .querySelectorAll('.post-card img')
+        .forEach((postImage) =>
+          postImage.addEventListener('load', scheduleRowSpanUpdate),
+        )
+    </script>
   </body>
 </html>
