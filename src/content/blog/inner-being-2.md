@@ -1,9 +1,9 @@
 ---
-title: 'She who feels III'
+title: 'inner being ii'
 description: ''
-pubDate: 'Feb 21 2026'
+pubDate: 'Jan 25 2026'
 heroImage: 
-  source: ../../assets/she-who-feels-3.png
+  source: ../../assets/inner-being-2.png
   width: 400
   height: 200
   alt: ""
